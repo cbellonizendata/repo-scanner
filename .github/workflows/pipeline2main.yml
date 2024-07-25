@@ -1,0 +1,21 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get current branch name
+        id: branch_name
+        run: echo "BRANCH_NAME=$(git symbolic-ref HEAD)" >> $GITHUB_ENV
+
+      - name: Make POST request
+        run: |
+          echo "Branch Name: $BRANCH_NAME"
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"ref":"${{ env.BRANCH_NAME }}", "ci": true }' \
+            https://develop-api.zendata.dev/repositories/300b9f94-e095-4cdc-aa71-66c783d0075e/webhook/
